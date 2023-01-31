@@ -175,6 +175,12 @@ for (const [brand, products] of Object.entries(brands)) {
 // 🎯 TODO 10: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
 // 2. Log the sort
+console.log("Todo 10 :");
+for (const [brand, products] of Object.entries(brands)) {
+  const sortedProducts = products.sort((a,b) => new Date(b.released) - new Date(a.released));
+  console.log(`Sorted products for ${brand}:`);
+  console.log(sortedProducts);
+}
 
 /**
  * 💶
