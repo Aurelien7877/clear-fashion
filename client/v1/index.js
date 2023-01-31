@@ -2,7 +2,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode#invoking_strict_mode
 'use strict';
 
-console.log('🚀 This is it.');
+console.log('🚀 This is it yheaaaa.');
 
 const MY_FAVORITE_BRANDS = [
   {
@@ -34,6 +34,10 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // 1. Create a new variable and assign it the link of the cheapest t-shirt
 // I can find on these e-shops
 // 2. Log the variable
+console.log("Todo 1 :");
+const cheapTShirt = 'https://www.loom.fr/products/le-t-shirt-ancienne-generation?_pos=2&_sid=9ee34286d&_ss=r'
+console.log("Tshirt le moins chère hors réduction éphémère :");
+console.log(cheapTShirt);
 
 /**
  * 👕
@@ -47,29 +51,74 @@ console.log(MY_FAVORITE_BRANDS[0]);
 // 🎯 TODO 2: Number of products
 // 1. Create a variable and assign it the number of products
 // 2. Log the variable
+console.log("Todo 2 :");
+console.log("Number of products:");
+const NumbOfProducts = marketplace.length
+console.log(NumbOfProducts);
 
 // 🎯 TODO 3: Brands name
 // 1. Create a variable and assign it the list of brands name only
 // 2. Log the variable
 // 3. Log how many brands we have
+console.log("Todo 3 :");
+const BrandNames = []
+for (const product of marketplace) {
+  BrandNames.push(product.brand);
+  
+}
+
+console.log(BrandNames);
+console.log('Now, uniques brand names :')
+let uniqueBrandNames = [...new Set(BrandNames)];
+
+console.log(uniqueBrandNames);
+console.log(uniqueBrandNames.length);
+
 
 // 🎯 TODO 4: Sort by price
 // 1. Create a function to sort the marketplace products by price
 // 2. Create a variable and assign it the list of products by price from lowest to highest
 // 3. Log the variable
+console.log("Todo 4:");
+
+function PriceSorted(marketplace) {
+  return marketplace.sort((a, b) => a.price - b.price);
+}
+
+const ProductsSortedprice = PriceSorted(marketplace);
+
+console.log(ProductsSortedprice);
 
 // 🎯 TODO 5: Sort by date
 // 1. Create a function to sort the marketplace objects by products date
 // 2. Create a variable and assign it the list of products by date from recent to old
 // 3. Log the variable
+console.log("Todo 5 :");
+function DateSorted(marketplace) {
+  return marketplace.sort((a, b) => new Date(b.released) - new Date(a.released));
+}
+
+const ProductsSortedDate = DateSorted(marketplace);
+
+console.log(ProductsSortedDate);
 
 // 🎯 TODO 6: Filter a specific price range
 // 1. Filter the list of products between 50€ and 100€
 // 2. Log the list
+console.log("Todo 6 :");
+const filterProdPrice = marketplace.filter(marketplace => marketplace.price >= 50 && marketplace.price <= 100);
+
+console.log(filterProdPrice);
+
 
 // 🎯 TODO 7: Average price
 // 1. Determine the average price of the marketplace
 // 2. Log the average
+console.log("Todo 7 :");
+const sum = marketplace.reduce((a, b) => a + b.price, 0);
+const avg = (sum / marketplace.length) || 0;
+
+console.log(`The sum is: ${sum}. The average is: ${Math.round(avg * 100) / 100}.`);
 
 /**
  * 🏎
@@ -93,10 +142,35 @@ console.log(MY_FAVORITE_BRANDS[0]);
 //
 // 2. Log the variable
 // 3. Log the number of products by brands
+console.log("Todo 8 :");
+
+const brands = {};
+
+marketplace.forEach(product => {
+  if (!brands[product.brand]) {
+    brands[product.brand] = [];
+  }
+  brands[product.brand].push(product);
+});
+
+console.log(brands);
+Object.entries(brands).forEach(([brand, products]) => {
+  console.log(`${brand}: ${products.length} products`);
+});
+
+
 
 // 🎯 TODO 9: Sort by price for each brand
 // 1. For each brand, sort the products by price, from highest to lowest
 // 2. Log the sort
+console.log("Todo 9 :");
+//tri croissant 
+for (const [brand, products] of Object.entries(brands)) {
+  const sortedProducts = products.sort((a, b) => a.price - b.price);
+  console.log(`Sorted products for ${brand}:`);
+  console.log(sortedProducts);
+}
+
 
 // 🎯 TODO 10: Sort by date for each brand
 // 1. For each brand, sort the products by date, from old to recent
