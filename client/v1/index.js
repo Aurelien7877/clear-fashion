@@ -1,6 +1,7 @@
 // Invoking strict mode
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode#invoking_strict_mode
 'use strict';
+// cd C:\Users\aurel\OneDrive - De Vinci\ONE DRIVE PC\A4 S8\WebApp\clear-fashion
 //git add -A && git commit -m "Todo9"
 //git push origin master
 console.log('🚀 This is it yheaaaa.');
@@ -398,27 +399,37 @@ const COTELE_PARIS = [
 // // A new product is a product `released` less than 2 weeks.
 console.log('Part 2 : Todo 1 ')
 
-const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000; // in milliseconds
 const date = Date.now(); 
+const deux_Semaines = 14 * 24 * 60 * 60 * 1000; // in milliseconds
+const isNew = (released) => (date - Date.parse(released)) < deux_Semaines;
 
-const isNewProduct = (released) => (date - Date.parse(released)) < TWO_WEEKS;
+const NewProducts= COTELE_PARIS.every((product) => isNew(product.released));
 
-const hasNewProductsOnly = COTELE_PARIS.every((product) => isNewProduct(product.released));
-
-console.log(`New products released less than 2 weeks ?  ${hasNewProductsOnly}:`);
+console.log(`New products released less than 2 weeks ?  ${NewProducts}:`);
 
 
 // 🎯 TODO 2: Reasonable price
 // // 1. Log if coteleparis is a reasonable price shop (true or false)
 // // A reasonable price if all the products are less than 100€
+console.log('Part 2 : Todo 2 ')
+const isReasonablePrice = COTELE_PARIS.every(product => product.price < 100);
+console.log(`Coteleparis is a reasonable price shop ?  ${isReasonablePrice}:`)
 
 // 🎯 TODO 3: Find a specific product
 // 1. Find the product with the uuid `2b9a47e3-ed73-52f6-8b91-379e9c8e526c`
 // 2. Log the product
+console.log('Part 2 : Todo 3 ')
+const findProduct = COTELE_PARIS.find(product => product.uuid === '2b9a47e3-ed73-52f6-8b91-379e9c8e526c');
+console.log('Product to find :');
+console.log(findProduct);
 
 // 🎯 TODO 4: Delete a specific product
 // 1. Delete the product with the uuid `2b9a47e3-ed73-52f6-8b91-379e9c8e526c`
 // 2. Log the new list of product
+console.log('Part 2 : Todo 4 ')
+const newlist = COTELE_PARIS.filter(product => product.uuid !== '2b9a47e3-ed73-52f6-8b91-379e9c8e526c');
+console.log('the new list of product ')
+console.log(newlist);
 
 // 🎯 TODO 5: Save the favorite product
 // We declare and assign a variable called `blueJacket`
@@ -442,6 +453,13 @@ jacket.favorite = true;
 
 // 1. Log `blueJacket` and `jacket` variables
 // 2. What do you notice?
+console.log('Part 2 : Todo 5 ')
+console.log(blueJacket);
+console.log(jacket);
+
+//On remarque que les deux variables ont les mêmes propriétés, même la nouvelle 'favorite'.
+//Ceci est dû au fait que jacket est une référence de l'objet `blueJacket`, 
+//plutôt qu'une copie.
 
 // we make a new assignment again
 blueJacket = {
@@ -457,6 +475,12 @@ blueJacket = {
 };
 
 // 3. Update `jacket` property with `favorite` to true WITHOUT changing blueJacket properties
+console.log('Part 2 : Todo 6 ')
+jacket = Object.assign({}, blueJacket, {favorite: true});
+console.log('blueJacket : ')
+console.log(blueJacket);
+console.log('jacket : ')
+console.log(jacket);
 
 /**
  * 🎬
@@ -467,3 +491,8 @@ blueJacket = {
 // 🎯 LAST TODO: Save in localStorage
 // 1. Save MY_FAVORITE_BRANDS in the localStorage
 // 2. log the localStorage
+console.log('Last Todo : ')
+
+localStorage.setItem('MY_FAVORITE_BRANDS', JSON.stringify(MY_FAVORITE_BRANDS));
+
+console.log(localStorage);
