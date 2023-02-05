@@ -1,7 +1,8 @@
 // Invoking strict mode
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode#invoking_strict_mode
 'use strict';
-
+//git add -A && git commit -m "Todo9"
+//git push origin master
 console.log('🚀 This is it yheaaaa.');
 
 const MY_FAVORITE_BRANDS = [
@@ -192,6 +193,17 @@ for (const [brand, products] of Object.entries(brands)) {
 // 🎯 TODO 11: Compute the p90 price value
 // 1. Compute the p90 price value of each brand
 // The p90 value (90th percentile) is the lower value expected to be exceeded in 90% of the products
+console.log("Todo 11");
+
+for (let brand in brands) {
+  // sort the products by price in ascending order
+  brands[brand].sort((a, b) => a.price - b.price);
+
+  // calculate the index of the 90th percentile
+  const index = Math.floor(brands[brand].length * 0.9);
+  const p90Val = brands[brand][index].price;
+  console.log(`Brand :  ${brand} |  p90 :  ${p90Val} $`);
+}
 
 /**
  * 🧥
@@ -384,6 +396,17 @@ const COTELE_PARIS = [
 // 🎯 TODO 1: New released products
 // // 1. Log if we have new products only (true or false)
 // // A new product is a product `released` less than 2 weeks.
+console.log('Part 2 : Todo 1 ')
+
+const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000; // in milliseconds
+const date = Date.now(); 
+
+const isNewProduct = (released) => (date - Date.parse(released)) < TWO_WEEKS;
+
+const hasNewProductsOnly = COTELE_PARIS.every((product) => isNewProduct(product.released));
+
+console.log(`New products released less than 2 weeks ?  ${hasNewProductsOnly}:`);
+
 
 // 🎯 TODO 2: Reasonable price
 // // 1. Log if coteleparis is a reasonable price shop (true or false)
