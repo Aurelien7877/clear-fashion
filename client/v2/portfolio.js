@@ -138,3 +138,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
+
+
+/* FEATURE 1 */
+//To load the page
+const loadPage = async (page) => {
+  const products = await fetchProducts(page, parseInt(selectShow.value));
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+};
+
+//When a page is selected, call 'loadpage'
+selectPage.addEventListener('change', (event) => {
+  loadPage(parseInt(event.target.value));
+});
+
