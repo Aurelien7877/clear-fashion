@@ -2,19 +2,8 @@
 'use strict';
 
 /*
-Description of the available api
 GET https://clear-fashion-api.vercel.app/
-
-Search for specific products
-
-This endpoint accepts the following optional query string parameters:
-
-- `page` - page of products to return
-- `size` - number of products to return
-
 GET https://clear-fashion-api.vercel.app/brands
-
-Search for available brands list
 */
 
 // current products on the page
@@ -26,29 +15,25 @@ const selectShow = document.querySelector('#show-select');
 const selectPage = document.querySelector('#page-select');
 const sectionProducts = document.querySelector('#products');
 const spanNbProducts = document.querySelector('#nbProducts');
+const brandSelect = document.querySelector('#brand-select');
 
-/**
- * Set global value
- * @param {Array} result - products to display
- * @param {Object} meta - pagination meta info
- */
+
 const setCurrentProducts = ({result, meta}) => {
   currentProducts = result;
   currentPagination = meta;
 };
 
-/**
- * Fetch products from api
- * @param  {Number}  [page=1] - current page to fetch
- * @param  {Number}  [size=12] - size of the page
- * @return {Object}
- */
-const fetchProducts = async (page = 1, size = 12) => {
+
+const fetchProducts = async (page = 1, size = 12, brand =null) => {
   try {
-    const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
-    );
+    let url = `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`;
+    if (brand) {
+      url += `&brand=${brand}`;
+    }
+
+    const response = await fetch(url);
     const body = await response.json();
+
 
     if (body.success !== true) {
       console.error(body);
@@ -62,10 +47,10 @@ const fetchProducts = async (page = 1, size = 12) => {
   }
 };
 
-/**
- * Render list of products
- * @param  {Array} products
- */
+
+
+
+
 const renderProducts = products => {
   const fragment = document.createDocumentFragment();
   const div = document.createElement('div');
@@ -87,10 +72,7 @@ const renderProducts = products => {
   sectionProducts.appendChild(fragment);
 };
 
-/**
- * Render page selector
- * @param  {Object} pagination
- */
+
 const renderPagination = pagination => {
   const {currentPage, pageCount} = pagination;
   const options = Array.from(
@@ -102,15 +84,12 @@ const renderPagination = pagination => {
   selectPage.selectedIndex = currentPage - 1;
 };
 
-/**
- * Render page selector
- * @param  {Object} pagination
- */
 const renderIndicators = pagination => {
   const {count} = pagination;
 
   spanNbProducts.innerHTML = count;
 };
+
 
 const render = (products, pagination) => {
   renderProducts(products);
@@ -118,13 +97,8 @@ const render = (products, pagination) => {
   renderIndicators(pagination);
 };
 
-/**
- * Declaration of all Listeners
- */
 
-/**
- * Select the number of products to display
- */
+
 selectShow.addEventListener('change', async (event) => {
   const products = await fetchProducts(currentPagination.currentPage, parseInt(event.target.value));
 
@@ -132,13 +106,16 @@ selectShow.addEventListener('change', async (event) => {
   render(currentProducts, currentPagination);
 });
 
+
+
+
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
-
+  const brands = await fetchBrands();
   setCurrentProducts(products);
+  renderBrands(brands);
   render(currentProducts, currentPagination);
 });
-
 
 /* FEATURE 1 */
 //To load the page
@@ -154,3 +131,47 @@ selectPage.addEventListener('change', (event) => {
   loadPage(parseInt(event.target.value));
 });
 
+//Feature 2
+//First, we need to fetch the list of available brands
+async function fetchBrands() {
+  try {
+    const response = await fetch(
+      'https://clear-fashion-api.vercel.app/brands'
+    );
+    const body = await response.json();
+
+    if (body.success !== true) {
+      console.error(error);
+      //return [];
+    }
+
+    else {
+      return body.data.result;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+//Next, we need to render the brands in the select element for brands.
+const renderBrands = brands => {
+  const options = brands
+    .map(brand => `<option value="${brand}">${brand}</option>`)
+    .join('');
+
+  brandSelect.innerHTML = options;
+};
+
+//add an event listener to the select element for brands to filter the products based on the selected brand.
+brandSelect.addEventListener('change', async (event) => {
+  const brand = event.target.value;
+  let products;
+
+  if (brand) {
+    products = currentProducts.filter(product => product.brand === brand);
+  } else {
+    products = await fetchProducts(currentPagination.currentPage, parseInt(selectShow.value));
+    setCurrentProducts(products);
+  }
+
+  render(products, currentPagination);
+});
