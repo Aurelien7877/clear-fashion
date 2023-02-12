@@ -1,6 +1,8 @@
 // Invoking strict mode https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode#invoking_strict_mode
 'use strict';
-
+// cd C:\Users\aurel\OneDrive - De Vinci\ONE DRIVE PC\A4 S8\WebApp\clear-fashion
+//git add -A && git commit -m "Todo9"
+//git push origin master
 
 // current products on the page
 let currentProducts = [];
@@ -15,23 +17,16 @@ const spanNbProducts = document.querySelector('#nbProducts');
 const brandSelect = document.querySelector('#brand-select');
 const sortSelect = document.querySelector('#sort-select');
 const filterSelectNew = document.querySelector('#select-New');
-/**
- * Set global value
- * @param {Array} result - products to display
- * @param {Object} meta - pagination meta info
- */
+const filterSelectPrice = document.querySelector('#select-Price');
+
+
 const setCurrentProducts = ({result, meta}) => {
   currentProducts = result;
   currentPagination = meta;
 };
 
-/**
- * Fetch products from api
- * @param  {Number}  [page=1] - current page to fetch
- * @param  {Number}  [size=12] - size of the page
- * @return {Object}
- */
-const fetchProducts = async (page = 1, size = 12, brand = null, sort = null) => {
+
+const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,recent =false,price = false) => {
   try {
     const response = await fetch(
       `https://clear-fashion-api.vercel.app?size=999` + (brand !== null ? `&brand=${brand}` : "")
@@ -50,8 +45,36 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null) => 
       pageSize: size,
       count: result.length
     };
+
+
+    //fonctions intermédiaires
+    //Filter
+    if (recent ==true) {
+      result = result.filter(product => (new Date() - new Date(product.released)) / (1000 * 60 * 60 * 24) < 14);
+    }
+    if (price==true) {
+      result = result.filter(product => product.price < 50);
+    }
+    //Sort
+    switch (sort) {
+      case 'price-desc':
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case 'price-asc':
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case 'date-asc':
+        result.sort((a, b) => new Date(b.released) - new Date(a.released));
+        break;
+      case 'date-desc':
+        result.sort((a, b) => new Date(a.released) - new Date(b.released));
+        break;
+    }
+
+
+
     //Permet de limiter le résultat car sinon tout les resultats sont affichés
-    var result = result.slice((page - 1) * size, page * size);
+    result = result.slice((page - 1) * size, page * size);
     return {result,meta};
     
   } catch (error) {
@@ -59,6 +82,8 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null) => 
     return {currentProducts, currentPagination};
   }
 };
+
+
 
 const renderProducts = products => {
   const fragment = document.createDocumentFragment();
@@ -146,25 +171,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 selectShow.addEventListener('change', async (event) => {
-  const products = await fetchProducts(1, parseInt(event.target.value), brandSelect.value, sortSelect.value);
+  const products = await fetchProducts(1, parseInt(event.target.value), brandSelect.value, sortSelect.value,filterSelectNew.value,filterSelectPrice.value);
 
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
 
 selectPage.addEventListener('change', async (event) => {
-  const products = await fetchProducts(parseInt(event.target.value), currentPagination.pageSize, brandSelect.value, sortSelect.value);
+  const products = await fetchProducts(parseInt(event.target.value), currentPagination.pageSize, brandSelect.value, sortSelect.value,filterSelectNew.value,filterSelectPrice.value);
 
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
 
 brandSelect.addEventListener('change', async (event) => {
-  const products = await fetchProducts(1, currentPagination.pageSize, event.target.value, sortSelect.value);
+  const products = await fetchProducts(1, currentPagination.pageSize, event.target.value, sortSelect.value,filterSelectNew.value,filterSelectPrice.value);
 
   setCurrentProducts(products);
   render(currentProducts, currentPagination);
 });
 
+filterSelectNew.addEventListener("click", async (event) => {
+  const products = await fetchProducts(1, currentPagination.pageSize, brandSelect.value, sortSelect.value, true,filterSelectPrice.value);
 
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
 
+filterSelectPrice.addEventListener("click", async (event) => {
+  const products = await fetchProducts(1, currentPagination.pageSize, brandSelect.value, sortSelect.value, filterSelectNew.value, true);
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
+
+sortSelect.addEventListener('change', async (event) => {
+  const products = await fetchProducts(1, currentPagination.pageSize, brandSelect.value, event.target.value,filterSelectNew.value,filterSelectPrice.value);
+
+  setCurrentProducts(products);
+  render(currentProducts, currentPagination);
+});
