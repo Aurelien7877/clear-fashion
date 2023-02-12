@@ -1,0 +1,90 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url(background2.png);
+    background-size: cover;
+    /*background-color: #f2f2f2;*/
+  }
+  
+  /* le titre*/
+  h1 {
+    text-align: center;
+    font-size: 60px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+  
+  section {
+    width: 80%;
+    margin: 0 auto;
+    text-align: left;
+  }
+  
+  #options {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+  }
+  
+  #show, #page, #filters, #sort {
+    display: inline-block;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  /* Les selecteurs menut déroulant sort et vrand*/
+  select {
+    width: 120px;
+    height: 30px;
+    font-size: 16px;
+    margin-right: 20px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 5px;
+  }
+  
+  #indicators {
+    margin-bottom: 40px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 20px;
+    
+  }
+  
+  #indicators div {
+    margin-bottom: 10px;
+  }
+  
+  #nbProducts, #nbBrands, #nbRecent, #p50, #p90, #p95, #lastReleasedDate {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  
+  #products {
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  #Select-filter button {
+    background-color: #f7f9f7;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 10px;
+    
+    }
+    
+    #Select-filter button:hover {
+        background-color: #3e8e41;
+    }

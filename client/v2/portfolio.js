@@ -71,16 +71,16 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
     //Sort
     switch (sort) {
       case 'price-desc':
-        result.sort((a, b) => b.price - a.price);
+        result = result.sort((a, b) => b.price - a.price);
         break;
       case 'price-asc':
-        result.sort((a, b) => a.price - b.price);
+        result = result.sort((a, b) => a.price - b.price);
         break;
       case 'date-asc':
-        result.sort((a, b) => new Date(b.released) - new Date(a.released));
+        result = result.sort((a, b) => new Date(b.released) - new Date(a.released));
         break;
       case 'date-desc':
-        result.sort((a, b) => new Date(a.released) - new Date(b.released));
+        result = result.sort((a, b) => new Date(a.released) - new Date(b.released));
         break;
     }
 
@@ -93,12 +93,12 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
       p50 = sortPrice[Math.floor(result.length * 0.5)].price;
       p90 = sortPrice[Math.floor(result.length * 0.9)].price;
       p95 = sortPrice[Math.floor(result.length * 0.95)].price;
+
+      const DateReleased = [...result].sort((a, b) => new Date(b.released) - new Date(a.released));
+      lastDateReleased = DateReleased[0].released;
     }
     else { p50=0;p90=0;p95=0;}
 
-    const DateReleased = result.sort((a, b) => new Date(b.released) - new Date(a.released));
-    lastDateReleased = DateReleased[0].released;
-    console.log(lastDateReleased);
 
     //Permet de limiter le résultat car sinon tout les resultats sont affichés
     result = result.slice((page - 1) * size, page * size);
