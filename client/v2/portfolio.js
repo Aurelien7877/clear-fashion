@@ -12,6 +12,7 @@ let nbRecentProducts = 0;
 let p50 = 0;
 let p90 = 0;
 let p95 = 0;
+let lastDateReleased = NaN;
 
 
 // instantiate the selectors
@@ -28,6 +29,7 @@ const showNbRecent = document.querySelector('#nbRecent');
 const showP50 = document.querySelector('#p50');
 const showP90 = document.querySelector('#p90');
 const showP95 = document.querySelector('#p95');
+const showLastReleasedDate = document.querySelector("#lastReleasedDate");
 
 
 
@@ -94,7 +96,9 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
     }
     else { p50=0;p90=0;p95=0;}
 
-
+    const DateReleased = result.sort((a, b) => new Date(b.released) - new Date(a.released));
+    lastDateReleased = DateReleased[0].released;
+    console.log(lastDateReleased);
 
     //Permet de limiter le résultat car sinon tout les resultats sont affichés
     result = result.slice((page - 1) * size, page * size);
@@ -105,8 +109,6 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
     return {currentProducts, currentPagination};
   }
 };
-
-
 
 const renderProducts = products => {
   const fragment = document.createDocumentFragment();
@@ -155,6 +157,7 @@ const render = (products, pagination,brands) => {
   renderBrandsNB(brands);
   renderRecentProducts();
   renderP50P90P95();
+  renderLastReleasedDate();
 };
 
 async function fetchBrands() {
@@ -199,7 +202,9 @@ const renderP50P90P95 = () => {
   showP95.innerHTML = p95;
 };
 
-
+const renderLastReleasedDate = () => {
+  showLastReleasedDate.innerHTML = lastDateReleased;
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
   const products = await fetchProducts();
