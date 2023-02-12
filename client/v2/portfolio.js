@@ -7,6 +7,11 @@
 // current products on the page
 let currentProducts = [];
 let currentPagination = {};
+let nbBrands =0;
+let nbRecentProducts = 0;
+let p50 = 0;
+let p90 = 0;
+let p95 = 0;
 
 
 // instantiate the selectors
@@ -18,6 +23,12 @@ const brandSelect = document.querySelector('#brand-select');
 const sortSelect = document.querySelector('#sort-select');
 const filterSelectNew = document.querySelector('#select-New');
 const filterSelectPrice = document.querySelector('#select-Price');
+const showNbBrands = document.querySelector('#nbBrands');
+const showNbRecent = document.querySelector('#nbRecent');
+const showP50 = document.querySelector('#p50');
+const showP90 = document.querySelector('#p90');
+const showP95 = document.querySelector('#p95');
+
 
 
 const setCurrentProducts = ({result, meta}) => {
@@ -52,7 +63,7 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
     if (recent ==true) {
       result = result.filter(product => (new Date() - new Date(product.released)) / (1000 * 60 * 60 * 24) < 14);
     }
-    if (price==true) {
+    else if (price==true) {
       result = result.filter(product => product.price < 50);
     }
     //Sort
@@ -70,6 +81,18 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
         result.sort((a, b) => new Date(a.released) - new Date(b.released));
         break;
     }
+
+    //indicators (expect brands in fetchbrand)
+    nbRecentProducts = result.filter(product => (new Date() - new Date(product.released)) / (1000 * 60 * 60 * 24) < 14).length;
+
+    //Corrige le crash de rendu vide (car si on appuie sur recenlty 0 produits)
+    if (result.length>0) {
+      let sortPrice = [...result].sort((a, b) => a.price - b.price)
+      p50 = sortPrice[Math.floor(result.length * 0.5)].price;
+      p90 = sortPrice[Math.floor(result.length * 0.9)].price;
+      p95 = sortPrice[Math.floor(result.length * 0.95)].price;
+    }
+    else { p50=0;p90=0;p95=0;}
 
 
 
@@ -125,11 +148,13 @@ const renderIndicators = pagination => {
 };
 
 
-const render = (products, pagination) => {
+const render = (products, pagination,brands) => {
   renderProducts(products);
   renderPagination(pagination);
   renderIndicators(pagination);
-
+  renderBrandsNB(brands);
+  renderRecentProducts();
+  renderP50P90P95();
 };
 
 async function fetchBrands() {
@@ -144,6 +169,7 @@ async function fetchBrands() {
     }
     else {
       var brands = body.data.result;
+      nbBrands = brands.length;
       return brands;
     }
   } catch (error) {
@@ -158,6 +184,21 @@ const renderBrands = brands => {
 
   brandSelect.innerHTML = options;
 };
+
+const renderBrandsNB = brands => {;
+  showNbBrands.innerHTML = nbBrands;
+};
+
+const renderRecentProducts = () => {
+  showNbRecent.innerHTML = nbRecentProducts;
+};
+
+const renderP50P90P95 = () => {
+  showP50.innerHTML = p50;
+  showP90.innerHTML = p90;
+  showP95.innerHTML = p95;
+};
+
 
 
 document.addEventListener('DOMContentLoaded', async () => {
