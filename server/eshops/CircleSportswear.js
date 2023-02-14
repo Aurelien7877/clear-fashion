@@ -12,18 +12,29 @@ const parse = data => {
 
   return $('.product-grid-container .grid__item')
     .map((i, element) => {
-      const name = $(element)
+        const name = $(element)
         .find('.card__heading')
         .text()
+        .split(' ')
+        .filter(function(value, index, self) { 
+            return self.indexOf(value) === index;
+        }).join(' ')
         .trim()
         .replace(/\s/g, ' ');
-      const price = parseInt(
-        $(element)
-          .find('.card-information')
+      const price =$(element)
+          .find('.price__regular .price-item--regular')
           .text()
-      );
+          .trim()
+          .replace(/\s/g, ' ')
+          .replace('€', '');
+      const link ='https://shop.circlesportswear.com/'+ $(element)
+          .find('.full-unstyled-link').attr('href');
 
-      return {name, price};
+      const img = $(element)
+        .find('.motion-reduce')
+        .attr('srcset');
+    let date = new Date().toISOString().slice(0, 10);
+      return {name, price,link,img,date};
     })
     .get();
 };

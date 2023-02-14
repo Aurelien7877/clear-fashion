@@ -5,12 +5,12 @@ const circlesportswear = require('./eshops/CircleSportswear');
 //montlimart = https://www.montlimart.com/99-vetements
 //dedicated = https://www.dedicatedbrand.com/en/men/news
 //circlesportswear = https://shop.circlesportswear.com/collections/t-shirts-homme
-
-async function sandbox (eshop = 'https://www.montlimart.com/99-vetements') {
+const url = 'https://shop.circlesportswear.com/collections/t-shirts-homme'
+async function sandbox (eshop = url) {
 
     console.log(`🕵️‍♀️  browsing ${eshop} eshop`);
 
-    const products = await montlimartbrand.scrapeAndSave('https://www.montlimart.com/99-vetements', 'Montlimardproducts.json')
+    const products = await circlesportswear.scrapeAndSave(url, 'circleproduct.json')
     .then((products) => {
       console.log(products);
       console.log('done');
