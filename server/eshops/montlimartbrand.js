@@ -17,13 +17,24 @@ const parse = data => {
         .text()
         .trim()
         .replace(/\s/g, ' ');
+      const color = $(element)
+        .find('.product-miniature__color')
+        .text()
+        .trim()
+        .replace(/\s/g, ' ');
       const price = parseInt(
         $(element)
           .find('.product-miniature__pricing')
           .text()
       );
+      const link = $(element)
+        .find('.product-miniature__thumb-link')
+        .attr('href');
+      const img = $(element)
+        .find('.w-100')
+        .attr('data-src');
 
-      return {name, price};
+      return {name, color,price,link,img};
     })
     .get();
 };

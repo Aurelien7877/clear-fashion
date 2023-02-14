@@ -1,8 +1,10 @@
 /* eslint-disable no-console, no-process-exit */
 const dedicatedbrand = require('./eshops/dedicatedbrand');
 const montlimartbrand = require('./eshops/montlimartbrand');
+const circlesportswear = require('./eshops/CircleSportswear');
 //montlimart = https://www.montlimart.com/99-vetements
 //dedicated = https://www.dedicatedbrand.com/en/men/news
+//circlesportswear = https://shop.circlesportswear.com/collections/t-shirts-homme
 
 async function sandbox (eshop = 'https://www.montlimart.com/99-vetements') {
 
