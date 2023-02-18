@@ -33,8 +33,8 @@ const parse = data => {
       const img = $(element)
         .find('.w-100')
         .attr('data-src');
-
-      return {name, color,price,link,img};
+      let date = new Date().toISOString().slice(0, 10);
+      return {name, color,price,link,img,date};
     })
     .get();
 };

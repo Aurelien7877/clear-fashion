@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const fs = require('fs');
 
 /**
  * Parse webpage e-shop
@@ -13,6 +14,7 @@ const parse = data => {
     .map((i, element) => {
       const name = $(element)
         .find('.productList-title')
+        .text()
         .trim()
         .replace(/\s/g, ' ');
       const price = parseInt(
@@ -20,25 +22,29 @@ const parse = data => {
           .find('.productList-price')
           .text()
       );
+      const link ='https://www.dedicatedbrand.com'+ $(element)
+        .find('.productList-link').attr('href');
 
-      return {name, price};
+      const image =$(element)
+        .find('.js-lazy')
+        .attr('data-src')
+      let date = new Date().toISOString().slice(0, 10);
+      return {name, price,link,image,date};
     })
     .get();
 };
 
-/**
- * Scrape all the products for a given url page
- * @param  {[type]}  url
- * @return {Array|null}
- */
-module.exports.scrape = async url => {
+module.exports.scrapeAndSave = async (url, filename) => {
   try {
     const response = await fetch(url);
 
     if (response.ok) {
       const body = await response.text();
 
-      return parse(body);
+      const products = parse(body);
+      fs.writeFileSync(filename, JSON.stringify(products, null, 2));
+
+      return products;
     }
 
     console.error(response);
