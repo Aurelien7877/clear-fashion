@@ -2,6 +2,10 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
+const baseUrl = 'https://www.montlimart.com';
+
+
+
 /**
  * Parse webpage e-shop
  * @param  {String} data - html response
@@ -39,7 +43,7 @@ const parse = data => {
     .get();
 };
 
-module.exports.scrapeAndSave = async (url, filename) => {
+module.exports.scrapeAndSave = async (url, filename,i) => {
     try {
       const response = await fetch(url);
   
@@ -47,10 +51,15 @@ module.exports.scrapeAndSave = async (url, filename) => {
         const body = await response.text();
   
         const products = parse(body);
-        fs.writeFileSync(filename, JSON.stringify(products, null, 2));
-  
-        return products;
-      }
+        if (i ==0) {
+          //Truncate the file before appending else we have doublons
+          fs.truncateSync(filename, 0);
+        }
+        // Append the new products to the file
+        fs.appendFileSync(filename, JSON.stringify(products, null, 2));
+
+      return products;
+    }
   
       console.error(response);
   
