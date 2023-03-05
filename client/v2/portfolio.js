@@ -70,7 +70,7 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
       result = result.filter(product => product.price < 50);
     }
     else if (favorite==true) {
-      result = result.filter(product => (JSON.parse(localStorage.getItem('favoriteProducts'))|| []));
+      result = result.filter(product => (JSON.parse(localStorage.getItem("favorites")) || []).includes(product.uuid));
     }
     //Sort
     switch (sort) {
