@@ -70,7 +70,10 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
       result = result.filter(product => product.price < 50);
     }
     else if (favorite==true) {
-      result = result.filter(product => (JSON.parse(localStorage.getItem("favorites")) || []).includes(product.uuid));
+      result = result.filter(function(prod){
+        return favoriteItems.includes(prod.uuid);
+      });
+      if (result.length==0){return false;}
     }
     //Sort
     switch (sort) {
@@ -114,39 +117,35 @@ const fetchProducts = async (page = 1, size = 12, brand = null, sort = null,rece
   }
 };
 
+
+
 const renderProducts = products => {
-  const fragment = document.createDocumentFragment();
-  const div = document.createElement('div');
-  const template = products
-    .map(product => {
-      return `
-      <div class="product" id=${product.uuid}>
-        <span class="heart">💛</span>`
-        + (JSON.parse(localStorage.getItem("favorites")) || [])+`
-        <span>${product.brand}</span>
-        <a href="${product.link}" target="_blank">${product.name}</a>
-        <span>${product.price} </span>
-      </span></div>
-    `;
-    })
-    .join('');
+    const fragment = document.createDocumentFragment();
+    const div = document.createElement('div');
+    const template = products
+      .map(product => {
 
-  div.innerHTML = template;
-  fragment.appendChild(div);
-  sectionProducts.innerHTML = '<h2>Products</h2>';
-  sectionProducts.appendChild(fragment);
+        let checkbox = "";
+        if(favoriteItems.includes(product.uuid)){
+          checkbox = "checked";
+        }
 
-  //add to favorite
-  const hearts = document.querySelectorAll('.heart');
-  hearts.forEach((heart, index) => {
-    heart.addEventListener('click', () => {
-      heart.innerHTML = '❤️';
-      //products[index].isFavorite = true;
-      var favoriteProducts = JSON.parse(localStorage.getItem("favoriteProducts")) || [];
-      favoriteProducts.push(products[index]);
-      localStorage.setItem("favoriteProducts", JSON.stringify(favoriteProducts));
-    });
-  });
+        return `
+        <div class="product" id=${product.uuid}>
+        <span class="heartclass">💛</span><input class="heartclass" type="checkbox" id="${product.uuid}" ${checkbox}>
+          <span>${product.brand}</span>
+          <a href="${product.link}" target="_blank">${product.name}</a>
+          <span>${product.price} </span>
+        </span></div>
+      `;
+      })
+      .join('');
+
+    div.innerHTML = template;
+    fragment.appendChild(div);
+    sectionProducts.innerHTML = '<h2>Products</h2>';
+    sectionProducts.appendChild(fragment);
+
 
 };
 
@@ -171,6 +170,14 @@ const renderIndicators = pagination => {
 };
 
 
+let favoriteItems = [];
+try{
+  favoriteItems = JSON.parse(localStorage.getItem("favList"));
+}
+catch(error){favoriteItems = []}
+
+
+
 const render = (products, pagination,brands) => {
   renderProducts(products);
   renderPagination(pagination);
@@ -179,7 +186,27 @@ const render = (products, pagination,brands) => {
   renderRecentProducts();
   renderP50P90P95();
   renderLastReleasedDate();
+
+  const checkboxes = document.querySelectorAll('.heartclass');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', event => {
+      const checkboxId = event.target.id;
+      if (event.currentTarget.checked) {favoriteItems.push(checkboxId);}
+      else{
+        let i = 0;
+        while (i < favoriteItems.length) {
+          if (favoriteItems[i] === checkboxId) {
+            favoriteItems.splice(i, 1);
+          } 
+          else {++i;}
+        }
+      }
+      localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
+    });
+  });
+
 };
+
 
 
 async function fetchBrands() {
@@ -238,61 +265,122 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-selectShow.addEventListener('change', async (event) => {
-  const products = await fetchProducts(1, parseInt(event.target.value), brandSelect.value, sortSelect.value,filterSelectNew.value,filterSelectPrice.value, showFav.value);
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+let favorite = false;
+let brand = "coteleparis";
+let PageShow =12;
+let Sort = "price-asc";
+
+selectShow.addEventListener('change', async (event) => {
+  const products = await fetchProducts(currentPagination.currentPage, parseInt(event.target.value), brand, Sort,filterSelectNew.value,filterSelectPrice.values, favorite);
+  PageShow = parseInt(event.target.value);
+  if (products == false){
+    sectionProducts.innerHTML = "Nothing with the filters applied";
+    renderPagination(currentPagination);
+    renderIndicators(currentPagination);
+  }
+  else {
+
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
 });
 
 selectPage.addEventListener('change', async (event) => {
-  const products = await fetchProducts(parseInt(event.target.value), currentPagination.pageSize, brandSelect.value, sortSelect.value,filterSelectNew.value,filterSelectPrice.value,showFav.value);
+  const products = await fetchProducts(parseInt(event.target.value), currentPagination.pageSize, brand, Sort,filterSelectNew.value,filterSelectPrice.values,favorite);
+  if (products == false){
+    sectionProducts.innerHTML = "Nothing with the filters applied";
+    renderPagination(currentPagination);
+    renderIndicators(currentPagination);
+  }
+  else {
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
+
 });
 
 brandSelect.addEventListener('change', async (event) => {
-  const products = await fetchProducts(1, currentPagination.pageSize, event.target.value, sortSelect.value,filterSelectNew.value,filterSelectPrice.value,showFav.value);
+  const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize, event.target.value, Sort,filterSelectNew.value,filterSelectPrice.values,favorite);
+  brand = event.target.value;
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+  if (products == false){
+    sectionProducts.innerHTML = "Nothing with the filters applied";
+    renderPagination(currentPagination);
+    renderIndicators(currentPagination);
+  }
+  else {
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
 });
 
 filterSelectNew.addEventListener("click", async (event) => {
-  const products = await fetchProducts(1, currentPagination.pageSize, brandSelect.value, sortSelect.value, true,filterSelectPrice.value,showFav.value);
+  const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize, brand, Sort, true,filterSelectPrice.values,favorite);
+  if (products == false){
+    sectionProducts.innerHTML = "Nothing with the filters applied";
+    renderPagination(currentPagination);
+    renderIndicators(currentPagination);
+  }
+  else {
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
 });
 
 filterSelectPrice.addEventListener("click", async (event) => {
-  const products = await fetchProducts(1, currentPagination.pageSize, brandSelect.value, sortSelect.value, filterSelectNew.value, true,showFav.value);
+  const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize, brand, Sort, filterSelectNew.value, true,favorite);
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+  if (products == false){
+    sectionProducts.innerHTML = "Nothing with the filters applied";
+    renderPagination(currentPagination);
+    renderIndicators(currentPagination);
+  }
+  else {
+
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
+  
 });
 
 sortSelect.addEventListener('change', async (event) => {
-  const products = await fetchProducts(1, currentPagination.pageSize, brandSelect.value, event.target.value,filterSelectNew.value,filterSelectPrice.value,showFav.value);
+  const products = await fetchProducts(currentPagination.currentPage, currentPagination.pageSize, brand, event.target.value,filterSelectNew.value,filterSelectPrice.values,favorite);
+  Sort = event.target.value;
+  if (products == false){
+    sectionProducts.innerHTML = "Nothing with the filters applied";
+    renderPagination(currentPagination);
+    renderIndicators(currentPagination);
+  }
+  else {
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination);
+  }
 });
 
-showFav.addEventListener("click", async (event) => {
-  const products = await fetchProducts(1, currentPagination.pageSize, brandSelect.value,sortSelect.value, filterSelectNew.value,filterSelectPrice.value,true);
 
-  setCurrentProducts(products);
-  render(currentProducts, currentPagination);
+
+showFav.addEventListener('change', async(event) => {
+  if (event.currentTarget.checked) {
+    favorite = true;
+    const products = await fetchProducts(1, currentPagination.pageSize, brand, Sort, filterSelectNew.value,filterSelectPrice.values,favorite);
+    if (products == false){
+      sectionProducts.innerHTML = "Nothing Here";
+      renderPagination(currentPagination);
+      renderIndicators(currentPagination);
+    }
+    else{
+      setCurrentProducts(products);
+      render(currentProducts, currentPagination, brand);
+    }
+  }
+  else{
+    favorite = false;
+    const products = await fetchProducts(1, PageShow, brand,Sort, filterSelectNew.value,filterSelectPrice.values,favorite);
+    setCurrentProducts(products);
+    render(currentProducts, currentPagination,brand);
+  }
 });
-
-/*const filterFavorites = products => {
-  const filtered = products.filter(product => product.isFavorite);
-  renderProducts(filtered);
-};
-
-showFav.addEventListener('click', () => {
-  const products = JSON.parse(localStorage.getItem('products')) || [];
-  filterFavorites(products);
-});*/
