@@ -24,7 +24,7 @@ module.exports.scrapeAndSave = async(url, filename) =>{
       );
        fs.writeFileSync('dedicatedproducts.json', JSON.stringify(data_json,null , 2));
 
-       return true;
+       return data_json;
     }
     console.error(response);
     return null;
