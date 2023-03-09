@@ -9,6 +9,7 @@ const fs = require('fs');
  */
 const parse = data => {
   const $ = cheerio.load(data);
+  const brandName = 'Circle';
 
   return $('.product-grid-container .grid__item')
     .map((i, element) => {
@@ -34,7 +35,7 @@ const parse = data => {
         .find('.motion-reduce')
         .attr('srcset');
     let date = new Date().toISOString().slice(0, 10);
-      return {name, price,link,img,date};
+      return {name, price,link,img,date,brandName};
     })
     .get();
 };

@@ -13,7 +13,7 @@ const baseUrl = 'https://www.montlimart.com';
  */
 const parse = data => {
   const $ = cheerio.load(data);
-
+  const brandName = 'Montlimart';
   return $('.products-list.row .products-list__block')
     .map((i, element) => {
       const name = $(element)
@@ -38,7 +38,7 @@ const parse = data => {
         .find('.w-100')
         .attr('data-src');
       let date = new Date().toISOString().slice(0, 10);
-      return {name, color,price,link,img,date};
+      return {name, color,price,link,img,date,brandName};
     })
     .get();
 };

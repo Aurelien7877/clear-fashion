@@ -15,11 +15,12 @@ module.exports.scrapeAndSave = async(url, filename) =>{
       data_json =products.map(
         function(data){
           const image= data['image'][0];
+          const brandName = 'Dedicated';
           const link = "https://www.dedicatedbrand.com/en/"+ data['canonicalUri'];
           const name =data['name'];
           const price =data['price']['priceAsNumber'];
           let date = new Date().toISOString().slice(0, 10);
-          return{name, link, image, price, date};
+          return{name, link, image, price, date,brandName};
         }
       );
        fs.writeFileSync('dedicatedproducts.json', JSON.stringify(data_json,null , 2));

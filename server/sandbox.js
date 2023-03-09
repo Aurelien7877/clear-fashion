@@ -11,7 +11,7 @@ const urlMontli = ['https://www.montlimart.com/99-vetements','https://www.montli
 const all = ['https://www.dedicatedbrand.com/en/loadfilter','https://shop.circlesportswear.com/collections/all',
 'https://www.montlimart.com/99-vetements','https://www.montlimart.com/14-chaussures','https://www.montlimart.com/15-accessoires']
 const brands = ['Montlimart','Circle','Dedicated']
-
+const CircleName = 'Circle';
 
 async function sandbox (eshop) {
 
@@ -66,6 +66,11 @@ async function connectToDatabase(products) {
   collection.drop();
   const result = await collection.insertMany(products);
   console.log("Done insertion");
+
+  console.log("test : Circle products");
+  const circleproduct = await collection.find({brandName : "Circle"}).toArray();;
+
+  console.log(circleproduct);
   client.close();
 }
 
