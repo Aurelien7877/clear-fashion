@@ -22,12 +22,7 @@ const parse = data => {
         }).join(' ')
         .trim()
         .replace(/\s/g, ' ');
-      const price =$(element)
-          .find('.price__regular .price-item--regular')
-          .text()
-          .trim()
-          .replace(/\s/g, ' ')
-          .replace('€', '');
+      const price = parseInt($(element).find(".price__sale .money").text().slice(1), 10);
       const link ='https://shop.circlesportswear.com/'+ $(element)
           .find('.full-unstyled-link').attr('href');
 
