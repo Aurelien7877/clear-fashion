@@ -19,7 +19,8 @@ app.get('/', (request, response) => {
 });
 
 const {MongoClient} = require('mongodb');
- 
+const MONGODB_URI = 'mongodb+srv://admin:admin@clear-fashion.ykj5vxa.mongodb.net/?retryWrites=true&w=majority';
+const MONGODB_DB_NAME = 'clear-fashion';
 
 //Endpoint 2 : Search for specific products
 //OK, example : http://localhost:8092/products/search?limit=10&brandName=Circle&price=60
