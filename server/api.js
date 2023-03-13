@@ -33,17 +33,13 @@ app.get('/products/search', async (request, response) => {
 	  const collection = db.collection('products');
 
 
-    const limitSearch = request.query.limit || 12;
-    const brandSearch = request.query.brandName || undefined;
-    const priceSearch = request.query.price || undefined;
+    let limitSearch = request.query.limit || 12;
+    let brandSearch = request.query.brandName || undefined;
+    let priceSearch = request.query.price || undefined;
 
     let query = {};
-    if (brandSearch !== undefined) {
-      query.brandName = brandSearch;
-    }
-    if (priceSearch !== undefined) {
-      query.price = { $lte: parseInt(priceSearch) };
-    }
+    if (brandSearch !== undefined) {query.brandName = brandSearch;}
+    if (priceSearch !== undefined) {query.price = { $lte: parseInt(priceSearch) };}
 
     let endpointResult2 = await collection
     .find(query)
