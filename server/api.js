@@ -26,9 +26,10 @@ const MONGODB_DB_NAME = 'clear-fashion';
 //OK, example : http://localhost:8092/products/search?limit=10&brandName=Circle&price=60
 
 app.get('/products/search', async (request, response) => {
-  const MONGODB_URI = 'mongodb+srv://admin:admin@clear-fashion.ykj5vxa.mongodb.net/?retryWrites=true&w=majority';
-	const MONGODB_DB_NAME = 'clear-fashion';
   try{
+    const MONGODB_URI = 'mongodb+srv://admin:admin@clear-fashion.ykj5vxa.mongodb.net/?retryWrites=true&w=majority';
+    const MONGODB_DB_NAME = 'clear-fashion';
+  
 	  const client = await MongoClient.connect(MONGODB_URI, {'useNewUrlParser': true});
 	  const db =  client.db(MONGODB_DB_NAME);
 	  const collection = db.collection('products');
