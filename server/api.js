@@ -34,14 +34,14 @@ app.get('/products/search', async (request, response) => {
 
 
     const limitSearch = request.query.limit || 12;
-    const brandSearch = request.query.brandName || 'All Brand';
-    const priceSearch = request.query.price || 'All price';
+    const brandSearch = request.query.brandName || undefined;
+    const priceSearch = request.query.price || undefined;
 
     let query = {};
-    if (brandSearch !== 'All brands') {
+    if (brandSearch !== undefined) {
       query.brandName = brandSearch;
     }
-    if (priceSearch !== 'All price') {
+    if (priceSearch !== undefined) {
       query.price = { $lte: parseInt(priceSearch) };
     }
 
@@ -63,8 +63,6 @@ app.get('/products/search', async (request, response) => {
 
 //Obligé pour retouver l'id dans mongoDb Atlas
 let ObjectId = require('mongodb').ObjectId;
-// fait parti de l'id aussi. j'ai donc rajouté products/byID/:id pour vraimen les dissocier
-
 
 app.get('/products/:id', async (request, response) => {
   const MONGODB_URI = 'mongodb+srv://admin:admin@clear-fashion.ykj5vxa.mongodb.net/?retryWrites=true&w=majority';

@@ -14,7 +14,8 @@
     "node-fetch": "^2.6.8",
     "parse-domain": "^7.0.1",
     "require-all": "^3.0.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vercel": "^28.16.15"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
