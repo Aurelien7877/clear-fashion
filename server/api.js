@@ -53,6 +53,21 @@ app.get('/products/search', async (request, response) => {
   } catch(e){response.send({error : "search not valid !"});  }
 });
 
+//Endpoint 3 : To access Brand for client V2
+app.get('/brands', async (request, response) => {
+  const MONGODB_URI = 'mongodb+srv://admin:admin@clear-fashion.ykj5vxa.mongodb.net/?retryWrites=true&w=majority';
+  const MONGODB_DB_NAME = 'clear-fashion';
+
+  try {
+	  const client = await MongoClient.connect(MONGODB_URI, {'useNewUrlParser': true});
+	  const db =  client.db(MONGODB_DB_NAME);
+	  const collection = db.collection('products');
+
+    let endpointResult3 = await collection.distinct('brandName')
+
+	  response.send({result : endpointResult3});
+  } catch(e){response.send({error : "search not valid !"});  }
+});
 
 
 //Endpoint 1 : Fetch a specific product
