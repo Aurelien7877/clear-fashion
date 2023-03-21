@@ -64,13 +64,11 @@ const fetchProducts = async (size = 12, brand = null, price) => {
     }
     if(price == undefined){
       api = `https://server-psi-murex.vercel.app/products/search?limit=${size}&brandName=${brand}`;
-  
     }
     if((brand == undefined || brand == null ||brand =="")&& price==undefined){
       api = `https://server-psi-murex.vercel.app/products/search?limit=${size}`;
     }
     if((brand!== undefined && brand !== null ||brand !=="") && price!==undefined) {
-      
       api = `https://server-psi-murex.vercel.app/products/search?limit=${size}&brandName=${brand}&price=${price}`;
     }
     const response = await fetch(api);
@@ -93,8 +91,8 @@ const fetchProducts = async (size = 12, brand = null, price) => {
 //Fonction pour méta donnée
 function productToMeta(min, max, input){
   const {result} = input;
-  const selectedP = result.slice(min,max);
-  const products = { result: selectedP};
+  const output = result.slice(min,max);
+  const products = { result: output};
   return products;
 }
 
@@ -156,7 +154,7 @@ function dateDescending(input) {
 
 //Fonction de ma première étape :retrouver tout les produits en fonction des filtres
 
-const AllProd = async(page,size,brand,recent,price,filters,fav) => {
+const AllProd = async(page,size,brand,recent,price,filters) => {
 	let products = [];
 	if (price == true){products = await fetchProducts(3000,brand,50);} //3000 pour tout avoir '2033'
   else{products = await fetchProducts(3000,brand);}
@@ -167,10 +165,6 @@ const AllProd = async(page,size,brand,recent,price,filters,fav) => {
 	}
 	
 	if(price == true){products = LowPriceFunc(products);}
-
-  if(fav == true){
-    products = LowPriceFunc(products);
-  }
 
 	if (filters == "price-desc"){products = priceDescending(products);}
 
@@ -186,23 +180,38 @@ const AllProd = async(page,size,brand,recent,price,filters,fav) => {
 	};
 
 //Etape 2 : On filtre les resultats	
-const filterProd = async(brand, recent, price,Val,fav) => {
+const filterProd = async(brand, recent, price,filters) => {
 	let products = [];
 	if (price == true){products = await fetchProducts(3000,brand,50); }
   else{products = await fetchProducts(3000,brand);}
 
 	if(recent == true){products =  getRecent(products)	}
-	
-  if (Val == "price-desc"){products = priceDescending(products);}
 
-	if (Val == "price-asc"){products = priceAscending(products);}
+  if (filters == "price-desc"){products = priceDescending(products);}
 
-	if (Val == "date-desc"){products = dateDescending(products);}
+	if (filters == "price-asc"){products = priceAscending(products);}
 
-	if (Val == "date-asc"){products = dateAscending(products);}
+	if (filters == "date-desc"){products = dateDescending(products);}
+
+	if (filters == "date-asc"){products = dateAscending(products);}
 
   return products;
 	};
+
+  const getFavorite = async(favoriteItems) =>{
+    let products = [];
+    try {
+    for (let i = 0; i < favoriteItems.length; i++) {
+     const response = await fetch(`https://server-psi-murex.vercel.app/products/${favoriteItems[i]}`);
+     const body = await response.json(); 
+       products.push(body.result);	 
+    }
+      return products;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
 
 const renderProducts = products => {
   if (!products || products.length === 0) {
@@ -259,7 +268,7 @@ const renderPagination = datafiltered => {
 };
 
 const renderIndicators = products  => {
-  const count = products.length;
+  const count = products.result.length;
   spanNbProducts.innerHTML = count;
 };
 
@@ -275,27 +284,26 @@ catch(error){favoriteItems = []}
 const render = (products, datafiltered,brands) => {
   renderProducts(products);
   renderPagination(datafiltered);
-  renderIndicators(products);
+  renderIndicators(datafiltered);
   renderBrandsNB();
-  renderRecentProducts();
-  renderP50P90P95();
-  renderLastReleasedDate();
+  renderRecentProducts(datafiltered);
+  renderP50P90P95(datafiltered);
+  renderLastReleasedDate(datafiltered);
 
   const checkboxes = document.querySelectorAll('.heartclass');
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', event => {
-      const checkboxId = event.target.id;
-      if (event.currentTarget.checked) {favoriteItems.push(checkboxId);}
+      const idCHECKED = event.target.id;
+      if (event.currentTarget.checked) {favoriteItems.push(idCHECKED);}
       else{
         let i = 0;
         while (i < favoriteItems.length) {
-          if (favoriteItems[i] === checkboxId) {
-            favoriteItems.splice(i, 1);
-          } 
+          if (favoriteItems[i] === idCHECKED) {favoriteItems.splice(i, 1);} 
           else {++i;}
         }
       }
       localStorage.setItem('favoriteItems', JSON.stringify(favoriteItems));
+      console.log("fav :",favoriteItems);
     });
   });
 
@@ -315,12 +323,14 @@ async function fetchBrands() {
   }
 }
 
+//-------------- Les indicateurs -----------
+
 const renderBrands = brands => {
   const brandNames = Object.values(brands)[0];
   const options = brandNames
     .map(name => `<option value="${name}">${name}</option>`)
     .join('');
-    brandSelect.innerHTML = `<option value="">All</option>` + options;
+    brandSelect.innerHTML = `<option value="">All or Get Fav</option>` + options;
 };
 
 async function renderBrandsNB(){
@@ -333,28 +343,65 @@ async function renderBrandsNB(){
     }
 };
 
-const renderRecentProducts = () => {
+async function renderRecentProducts(products){
+  let prod = getRecent(products);
+  const nbRecentProducts = prod.result.length
   showNbRecent.innerHTML = nbRecentProducts;
 };
 
-const renderP50P90P95 = () => {
+async function renderP50P90P95(products){
+  const prices = products.result.map((product) => product.price); // extract prices from result array
+  let sortPrice =  prices.slice().sort((a, b) => a - b)
+  p50 = sortPrice[Math.floor(sortPrice.length * 0.5)];
+  p90 = sortPrice[Math.floor(sortPrice.length * 0.9)];
+  p95 = sortPrice[Math.floor(sortPrice.length * 0.95)];
+
   showP50.innerHTML = p50;
   showP90.innerHTML = p90;
   showP95.innerHTML = p95;
 };
 
-const renderLastReleasedDate = () => {
+async function renderLastReleasedDate(products){
+  if (products.result.length !== 0){
+    const sortedProducts = products.result.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+    const lastDateReleased = sortedProducts[0];
+    showLastReleasedDate.innerHTML = lastDateReleased.date
+    }
+  else {
+  lastDateReleased = "Null"
   showLastReleasedDate.innerHTML = lastDateReleased;
+  }
 };
 
+
+//-------------- Les event Listeners -----------
+///
+function dislpayCharging (){
+  const fragment = document.createDocumentFragment();
+  const div = document.createElement('div');
+  const template = `
+  <div class="loading">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>`;
+
+  div.innerHTML = template;
+  fragment.appendChild(div);
+  sectionProducts.innerHTML = '';
+  sectionProducts.appendChild(fragment);
+};
+
+
 document.addEventListener('DOMContentLoaded', async () => {
+  dislpayCharging ()
   let products = await fetchProducts();
   let brands = await fetchBrands();
 
   setCurrentProducts(products);
   renderBrands(brands);
 
-  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
   
   render(products.result, filteredproduct);
 
@@ -362,59 +409,65 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
-let favorite = false;
-let price = false;
+//let favorite = false;
+//let price = false;
 
 selectShow.addEventListener('change', async (event) => {
-  let products = await AllProd(pagecurrent,parseInt(event.target.value),brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  dislpayCharging ()
+  let products = await AllProd(pagecurrent,parseInt(event.target.value),brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
 
-  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
   
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, brandSelect.value);
 });
 
 selectPage.addEventListener('change', async (event) => {
+  dislpayCharging ()
   let page = parseInt(event.target.value);
   pagecurrent = page
 
-  let products = await AllProd(page,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  let products = await AllProd(page,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
 
-  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, brandSelect.value);
 
 });
 
 brandSelect.addEventListener('change', async (event) => {
-  let products = await AllProd(pagecurrent,selectShow.value,event.target.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  dislpayCharging ()
+  let products = await AllProd(pagecurrent,selectShow.value,event.target.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
 
-  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, event.target.value);
 });
 
 filterSelectNew.addEventListener("click", async (event) => {
-  let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  dislpayCharging ()
+  let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
 
-  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, brandSelect.value);
 });
 
 filterSelectPrice.addEventListener("click", async (event) => {
-  let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  dislpayCharging ()
+  let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
 
-  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, brandSelect.value);
   
 });
 
 sortSelect.addEventListener('change', async (event) => {
-  let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,event.target.value,showFav.checked);
+  dislpayCharging ()
+  let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,event.target.value);
 
-  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+  const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
   setCurrentProducts(products);
   render(currentProducts, filteredproduct, brandSelect.value);
 });
@@ -422,19 +475,20 @@ sortSelect.addEventListener('change', async (event) => {
 
 
 showFav.addEventListener('change', async(event) => {
+  dislpayCharging ()
   if (event.currentTarget.checked) {
-    favorite = true;
-    let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+    //favorite = true;
+    let products = await getFavorite(favoriteItems);
 
-    const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+    const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
     setCurrentProducts(products);
-    render(currentProducts, filteredproduct, brandSelect.value);
+    render(products, filteredproduct,brandSelect.value);
   }
   else{
-    favorite = false;
-    let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+    //favorite = false;
+    let products = await AllProd(pagecurrent,selectShow.value,brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
 
-    const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value,showFav.checked);
+    const filteredproduct = await filterProd(brandSelect.value,filterSelectNew.checked,filterSelectPrice.checked,sortSelect.value);
     setCurrentProducts(products);
     render(currentProducts, filteredproduct, brandSelect.value);
   }

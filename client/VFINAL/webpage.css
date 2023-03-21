@@ -16,7 +16,17 @@ body {
     font-family: 'Montserrat', sans-serif;
     color: #333;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-}
+  }
+
+
+  .product-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+  }
   
   section {
     width: 80%;
@@ -24,31 +34,75 @@ body {
     text-align: left;
   }
   
+  
+  
   #options {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    margin-bottom: 40px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  #options label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+  }
+  #options select {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   }
   
-  #show, #page, #filters, #sort {
+  
+  #show, #page, #filters, #brand, #sort {
+    margin-bottom: 10px;
+  }
+  
+  #show-select, #page-select, #brand-select, #sort-select {
+    font-size: 16px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    margin-left: 10px;
+    font-weight: bold;
+  }
+  
+  #Select-filter label {
     display: inline-block;
+    font-weight: bold;
+    margin-right: 10px;
+    margin-bottom: 5px;
+  }
+  
+  #Select-filter input[type="checkbox"] {
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  #Select-filter span {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 16px;
+    text-transform: capitalize;
+    font-weight: bold;
+  }
+  
+  #sort-select {
+    margin-left: 10px;
   }
   
   label {
     font-weight: bold;
-    margin-right: 10px;
   }
   
-  /* Les selecteurs menut déroulant sort et vrand*/
-  select {
-    width: 120px;
-    height: 30px;
-    font-size: 16px;
-    margin-right: 20px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    padding: 5px;
-  }
+  
   
   #indicators {
     margin-bottom: 40px;
@@ -73,18 +127,38 @@ body {
     border-radius: 10px;
   }
 
-  #Select-filter button {
-    background-color: #f7f9f7;
-    color: rgb(0, 0, 0);
-    border: none;
-    border-radius: 5px;
-    padding: 5px 8px;
-    font-size: 15px;
-    cursor: pointer;
-    margin-left: 10px;
+
+  .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
     
-    }
+  .loading div {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #3498db;
+    animation: fade 1s ease-in-out infinite;
+  }
     
-    #Select-filter button:hover {
-        background-color: #3e8e41;
+  .loading div:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  
+  .loading div:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  
+  @keyframes fade {
+    0% {
+      opacity: 0.5;
     }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
