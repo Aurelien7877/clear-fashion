@@ -26,10 +26,8 @@ const parse = data => {
       const link ='https://shop.circlesportswear.com/'+ $(element)
           .find('.full-unstyled-link').attr('href');
 
-      const img = $(element)
-        .find('.motion-reduce')
-        .attr('srcset');
-    let date = new Date().toISOString().slice(0, 10);
+      const img = $(element).find('.media').children("img").attr("srcset").split("?")[0];
+      let date = new Date().toISOString().slice(0, 10);
       return {name, price,link,img,date,brandName};
     })
     .get();

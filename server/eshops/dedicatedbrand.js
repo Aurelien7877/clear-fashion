@@ -18,7 +18,7 @@ module.exports.scrapeAndSave = async(url, filename) =>{
           const brandName = 'Dedicated';
           const link = "https://www.dedicatedbrand.com/en/"+ data['canonicalUri'];
           const name =data['name'];
-          const price =data['price']['priceAsNumber'];
+          const price =data.price.priceAsNumber;
           let date = new Date().toISOString().slice(0, 10);
           return{name, link, image, price, date,brandName};
         }
