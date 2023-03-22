@@ -198,6 +198,13 @@ const filterProd = async(brand, recent, price,filters) => {
   return products;
 	};
 
+
+  let favoriteItems = [];
+  try{
+    favoriteItems = JSON.parse(localStorage.getItem("favList"));
+  }
+  
+catch(error){favoriteItems = []}
   const getFavorite = async(favoriteItems) =>{
     let products = [];
     try {
@@ -273,11 +280,7 @@ const renderIndicators = products  => {
 };
 
 
-let favoriteItems = [];
-try{
-  favoriteItems = JSON.parse(localStorage.getItem("favList"));
-}
-catch(error){favoriteItems = []}
+
 
 
 
