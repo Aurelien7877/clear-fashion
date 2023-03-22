@@ -200,11 +200,10 @@ const filterProd = async(brand, recent, price,filters) => {
 
 
   let favoriteItems = [];
-  try{
-    favoriteItems = JSON.parse(localStorage.getItem("favList"));
-  }
-  
-catch(error){favoriteItems = []}
+  const temp = JSON.parse(localStorage.getItem("favoriteItems"));
+  if (temp !=null) {favoriteItems = temp}
+
+
   const getFavorite = async(favoriteItems) =>{
     let products = [];
     try {
