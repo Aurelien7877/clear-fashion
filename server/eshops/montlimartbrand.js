@@ -14,10 +14,10 @@ const baseUrl = 'https://www.montlimart.com';
 const parse = (data) => {
   const $ = cheerio.load(data);
   const brandName = 'Montlimart';
-  return $('.products-list.row .products-list__block')
+  return $('.products-list* .products-list__block*')
     .map((i, element) => {
       const name = $(element)
-        .find('.product-miniature__title')
+        .find('.text-reset')
         .text()
         .trim()
         .replace(/\s/g, ' ');
@@ -28,14 +28,17 @@ const parse = (data) => {
         .replace(/\s/g, ' ');
       const price = parseInt(
         $(element)
-          .find('.product-miniature__pricing')
+          .find('.price')
           .text()
       );
       const link = $(element)
         .find('.product-miniature__thumb-link')
         .attr('href');
 
-      const img = $(element).find('.product-miniature__thumb-link').children("img").attr("data-src");
+      const img = $(element)
+        .find('.product-miniature__thumb-link')
+        .children("img")
+        .attr("data-src");
       let date = new Date().toISOString().slice(0, 10);
       return {name, color,price,link,img,date,brandName};
     })

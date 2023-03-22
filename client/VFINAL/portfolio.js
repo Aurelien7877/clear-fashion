@@ -230,14 +230,14 @@ const renderProducts = products => {
         }
 
         return `
-        <div class="product" id=${product._id}>
-          
-        <span class="heartclass">💛</span><input class="heartclass" type="checkbox" id="${product._id}" ${checkbox}>
-          <span>${product.brandName}</span>
+        <div class="product" id="${product._id}">
+          <span class="heartclass">💛 -> </span>
+          <input class="checkboxclass" type="checkbox" id="${product._id}" ${checkbox}>
+          <span class ="BrandName">${product.brandName}</span>
           <a href="${product.link}" target="_blank">${product.name}</a>
-          <span>${product.price} €</span>
-          <a><img class="product-image" src="${product.image}"></a>
-        </span></div>
+          <span class = "Price">${product.price} €</span>
+          <a><img class="product-image" src="${product.img}"></a>
+        </div>
       `;
       })
       .join('');
@@ -290,7 +290,7 @@ const render = (products, datafiltered,brands) => {
   renderP50P90P95(datafiltered);
   renderLastReleasedDate(datafiltered);
 
-  const checkboxes = document.querySelectorAll('.heartclass');
+  const checkboxes = document.querySelectorAll('.checkboxclass');
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', event => {
       const idCHECKED = event.target.id;

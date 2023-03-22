@@ -11,7 +11,7 @@ const parse = data => {
   const $ = cheerio.load(data);
   const brandName = 'Circle';
 
-  return $('.product-grid-container .grid__item')
+  return $('#product-grid .grid__item')
     .map((i, element) => {
         const name = $(element)
         .find('.card__heading')
@@ -26,7 +26,11 @@ const parse = data => {
       const link ='https://shop.circlesportswear.com/'+ $(element)
           .find('.full-unstyled-link').attr('href');
 
-      const img = $(element).find('.media').children("img").attr("srcset").split("?")[0];
+      const img = 'https:' + $(element)
+        .find('.media')
+        .children("img")
+        .attr("srcset")
+        .split("?")[0];
       let date = new Date().toISOString().slice(0, 10);
       return {name, price,link,img,date,brandName};
     })

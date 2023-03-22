@@ -18,12 +18,54 @@ body {
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
   }
 
+ /* Style products infos */
+
+ .BrandName {
+  display: block;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+  margin-right: 10px;
+  }
+
+  .product:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 0px 8px #ccc;
+    border-radius: 20px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-radius 0.3s ease-in-out;
+  }
+  
+
+  .product .heartclass {
+    font-size: 1.2em;
+    margin-right: 5px;
+  }
+
+
+  .product span {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+  }
+  .Price::after {
+    content: " 💰";
+  }
+  .product a {
+    font-size: 1.1em;
+    color: #0ea58f;
+    margin-bottom: 5px;
+    text-shadow: 1px 1px 2px #ccc;
+  }
+
+  .product a:hover {
+    text-decoration: underline;
+  }
+
 
   .product-image {
     display: block;
-    max-width: 100%;
-    height: auto;
-    margin: 10px 0;
+    max-width: 45%;
+    max-height: 45%;
+    margin: 10px auto;
     border: 1px solid #ccc;
     border-radius: 20px;
   }
@@ -34,7 +76,21 @@ body {
     text-align: left;
   }
   
+
+  .checkboxclass {
+    display: inline-block;
+    appearance: none;
+    background-color: #eb0c0c;
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
   
+  .checkboxclass:checked {
+    background-color: #007aff;
+  }
   
   #options {
     display: flex;
@@ -60,6 +116,7 @@ body {
   }
   
   
+  
   #show, #page, #filters, #brand, #sort {
     margin-bottom: 10px;
   }
@@ -82,16 +139,22 @@ body {
   }
   
   #Select-filter input[type="checkbox"] {
-    display: inline-block;
     margin-right: 5px;
+    appearance: none;
+    background-color: #eb0c0c;
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+  
+  #Select-filter input[type="checkbox"]:checked {
+    background-color: #007aff;
   }
   
   #Select-filter span {
-    display: inline-block;
-    margin-right: 10px;
     font-size: 16px;
-    text-transform: capitalize;
-    font-weight: bold;
   }
   
   #sort-select {
