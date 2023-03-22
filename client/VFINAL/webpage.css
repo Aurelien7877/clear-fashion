@@ -19,9 +19,15 @@ body {
   }
 
  /* Style products infos */
+ .product {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
 
  .BrandName {
   display: block;
+  text-align: center;
   font-weight: bold;
   font-size: 1.2em;
   color: #333;
@@ -37,12 +43,16 @@ body {
   
 
   .product .heartclass {
+    display: flex;
+    text-align: center;
     font-size: 1.2em;
     margin-right: 5px;
   }
 
 
   .product span {
+    display: block;
+    text-align: center;
     font-size: 1.1em;
     margin-bottom: 5px;
   }
@@ -50,6 +60,9 @@ body {
     content: " 💰";
   }
   .product a {
+    display: block;
+    width: 170px;
+    text-align: center;
     font-size: 1.1em;
     color: #0ea58f;
     margin-bottom: 5px;
@@ -62,10 +75,8 @@ body {
 
 
   .product-image {
-    display: block;
-    max-width: 45%;
-    max-height: 45%;
-    margin: 10px auto;
+    width: 120px;
+    height: 120px;
     border: 1px solid #ccc;
     border-radius: 20px;
   }
@@ -77,18 +88,16 @@ body {
   }
   
 
-  .checkboxclass {
-    display: inline-block;
+  .product .checkboxclass {
     appearance: none;
     background-color: #eb0c0c;
     border: none;
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    vertical-align: middle;
   }
   
-  .checkboxclass:checked {
+  .product .checkboxclass:checked {
     background-color: #007aff;
   }
   

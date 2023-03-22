@@ -231,7 +231,7 @@ const renderProducts = products => {
 
         return `
         <div class="product" id="${product._id}">
-          <span class="heartclass">💛 -> </span>
+          <span class="heartclass">💛</span>
           <input class="checkboxclass" type="checkbox" id="${product._id}" ${checkbox}>
           <span class ="BrandName">${product.brandName}</span>
           <a href="${product.link}" target="_blank">${product.name}</a>
